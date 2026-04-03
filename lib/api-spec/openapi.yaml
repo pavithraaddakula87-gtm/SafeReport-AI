@@ -1,0 +1,732 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: SafeReport AI - Anonymous Complaint Reporting System
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: complaints
+    description: Complaint management
+  - name: admin
+    description: Admin operations
+  - name: analytics
+    description: Analytics and reporting
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: registerUser
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: loginUser
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /complaints:
+    get:
+      operationId: listComplaints
+      tags: [complaints]
+      summary: List complaints
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: urgency
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of complaints
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplaintListResponse"
+    post:
+      operationId: createComplaint
+      tags: [complaints]
+      summary: Submit a new complaint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateComplaintRequest"
+      responses:
+        "201":
+          description: Complaint created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplaintResponse"
+
+  /complaints/track/{complaintId}:
+    get:
+      operationId: trackComplaint
+      tags: [complaints]
+      summary: Track complaint by ID (public)
+      parameters:
+        - name: complaintId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Complaint status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplaintTrackResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /complaints/{id}:
+    get:
+      operationId: getComplaint
+      tags: [complaints]
+      summary: Get complaint details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Complaint details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Complaint"
+    patch:
+      operationId: updateComplaint
+      tags: [complaints]
+      summary: Update complaint
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateComplaintRequest"
+      responses:
+        "200":
+          description: Updated complaint
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Complaint"
+
+  /complaints/{id}/messages:
+    get:
+      operationId: getComplaintMessages
+      tags: [complaints]
+      summary: Get messages for a complaint
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+    post:
+      operationId: addComplaintMessage
+      tags: [complaints]
+      summary: Add a message to a complaint
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMessageRequest"
+      responses:
+        "201":
+          description: Message added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /complaints/{id}/escalate:
+    post:
+      operationId: escalateComplaint
+      tags: [admin]
+      summary: Escalate a complaint
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EscalateRequest"
+      responses:
+        "200":
+          description: Escalated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Complaint"
+
+  /admin/dashboard:
+    get:
+      operationId: getAdminDashboard
+      tags: [admin]
+      summary: Get admin dashboard stats
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /analytics/summary:
+    get:
+      operationId: getAnalyticsSummary
+      tags: [analytics]
+      summary: Get analytics summary
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsSummary"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+      required:
+        - name
+        - email
+        - password
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+      required:
+        - token
+        - user
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - role
+
+    CreateComplaintRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        subcategory:
+          type: string
+        incidentDate:
+          type: string
+        locationLat:
+          type: number
+        locationLng:
+          type: number
+        locationName:
+          type: string
+        isUrgent:
+          type: boolean
+        isUnsafe:
+          type: boolean
+        isRepeat:
+          type: boolean
+        numberOfPeople:
+          type: integer
+        witnessDetails:
+          type: string
+        imageBase64:
+          type: string
+        isAnonymous:
+          type: boolean
+        privacyLevel:
+          type: string
+          enum: [full, partial, public]
+        reporterName:
+          type: string
+        reporterEmail:
+          type: string
+        reporterPhone:
+          type: string
+        contactMethod:
+          type: string
+        additionalNotes:
+          type: string
+      required:
+        - title
+        - description
+        - category
+
+    UpdateComplaintRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, under_review, resolved, closed]
+        assignedTo:
+          type: string
+        adminNotes:
+          type: string
+        escalationLevel:
+          type: integer
+
+    EscalateRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+        level:
+          type: integer
+      required:
+        - reason
+
+    Complaint:
+      type: object
+      properties:
+        id:
+          type: integer
+        complaintId:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        subcategory:
+          type: string
+        aiCategory:
+          type: string
+        sentiment:
+          type: string
+        urgency:
+          type: string
+        riskScore:
+          type: integer
+        locationLat:
+          type: number
+        locationLng:
+          type: number
+        locationName:
+          type: string
+        incidentDate:
+          type: string
+        isUrgent:
+          type: boolean
+        isUnsafe:
+          type: boolean
+        isRepeat:
+          type: boolean
+        numberOfPeople:
+          type: integer
+        witnessDetails:
+          type: string
+        isAnonymous:
+          type: boolean
+        privacyLevel:
+          type: string
+        reporterName:
+          type: string
+        reporterEmail:
+          type: string
+        reporterPhone:
+          type: string
+        contactMethod:
+          type: string
+        additionalNotes:
+          type: string
+        hasImage:
+          type: boolean
+        status:
+          type: string
+        assignedTo:
+          type: string
+        escalationLevel:
+          type: integer
+        adminNotes:
+          type: string
+        userId:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - complaintId
+        - title
+        - description
+        - category
+        - urgency
+        - status
+        - createdAt
+
+    ComplaintResponse:
+      type: object
+      properties:
+        complaint:
+          $ref: "#/components/schemas/Complaint"
+        message:
+          type: string
+      required:
+        - complaint
+        - message
+
+    ComplaintListResponse:
+      type: object
+      properties:
+        complaints:
+          type: array
+          items:
+            $ref: "#/components/schemas/Complaint"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - complaints
+        - total
+        - page
+        - totalPages
+
+    ComplaintTrackResponse:
+      type: object
+      properties:
+        complaintId:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+        urgency:
+          type: string
+        escalationLevel:
+          type: integer
+        assignedTo:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        timeline:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimelineEvent"
+      required:
+        - complaintId
+        - title
+        - status
+        - urgency
+        - createdAt
+
+    TimelineEvent:
+      type: object
+      properties:
+        event:
+          type: string
+        timestamp:
+          type: string
+        description:
+          type: string
+      required:
+        - event
+        - timestamp
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        complaintId:
+          type: integer
+        senderId:
+          type: integer
+        senderName:
+          type: string
+        senderRole:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - complaintId
+        - content
+        - createdAt
+
+    CreateMessageRequest:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+
+    DashboardStats:
+      type: object
+      properties:
+        totalComplaints:
+          type: integer
+        highUrgency:
+          type: integer
+        pending:
+          type: integer
+        resolved:
+          type: integer
+        underReview:
+          type: integer
+        recentComplaints:
+          type: array
+          items:
+            $ref: "#/components/schemas/Complaint"
+        escalatedToday:
+          type: integer
+      required:
+        - totalComplaints
+        - highUrgency
+        - pending
+        - resolved
+        - underReview
+        - recentComplaints
+        - escalatedToday
+
+    AnalyticsSummary:
+      type: object
+      properties:
+        byCategory:
+          type: array
+          items:
+            $ref: "#/components/schemas/CountByLabel"
+        byStatus:
+          type: array
+          items:
+            $ref: "#/components/schemas/CountByLabel"
+        byUrgency:
+          type: array
+          items:
+            $ref: "#/components/schemas/CountByLabel"
+        byMonth:
+          type: array
+          items:
+            $ref: "#/components/schemas/CountByLabel"
+      required:
+        - byCategory
+        - byStatus
+        - byUrgency
+        - byMonth
+
+    CountByLabel:
+      type: object
+      properties:
+        label:
+          type: string
+        count:
+          type: integer
+      required:
+        - label
+        - count
