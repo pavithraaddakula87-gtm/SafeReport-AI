@@ -1,0 +1,75 @@
+Got it 👍 — this is a common but important error, and I’ll give you a direct FIX PROMPT (so you can paste into Replit AI / your code assistant and solve fast).
+❌ YOUR ERROR (UNDERSTAND IN 1 LINE)
+👉 Error:
+
+Unexpected token '<' ... not valid JSON
+👉 Meaning:
+Frontend expects JSON
+But backend is sending HTML (error page)
+🎯 WHY THIS HAPPENS
+Mostly because:
+Wrong API URL ❌
+Backend crashed ❌
+API returning HTML instead of JSON ❌
+✅ YOUR REQUIREMENT (IMPORTANT)
+✔ Do NOT change existing fields
+✔ Do NOT break current logic
+✔ Only fix API response handling
+🚀 🔥 COPY THIS PROMPT (USE IN REPLIT AI)
+👉 Paste this exactly:
+
+Fix the error: "Failed to execute 'json' on 'Response': Unexpected token '<'"
+
+Ensure that all backend API responses return valid JSON instead of HTML.
+
+Do NOT modify or remove any existing fields such as imageBase64, assignedTo, or any current database structure.
+
+Keep all existing functionality exactly the same.
+
+Specifically:
+1. In backend routes, ensure responses use res.json() instead of sending HTML.
+2. Add proper error handling so that even in failure cases, JSON is returned like:
+   { success: false, message: "Error description" }
+3. In frontend fetch calls, check response.ok before calling response.json().
+4. If response is not JSON, handle gracefully and show user-friendly error.
+
+Do not change UI, database schema, or existing logic. Only fix response format and error handling.
+🛠️ MANUAL QUICK FIX (if needed)
+👉 In frontend (IMPORTANT)
+Find your fetch code and change like this:
+JavaScript
+const res = await fetch("/api/report", {
+  method: "POST",
+  body: JSON.stringify(data),
+  headers: { "Content-Type": "application/json" }
+});
+
+if (!res.ok) {
+  const text = await res.text();
+  throw new Error(text);
+}
+
+const result = await res.json();
+👉 In backend (VERY IMPORTANT)
+Instead of this ❌:
+JavaScript
+res.send("Error occurred");
+Use this ✅:
+JavaScript
+res.json({ success: false, message: "Error occurred" });
+⚡ MOST LIKELY ROOT CAUSE (IN YOUR CASE)
+👉 Since deployed on Replit:
+Your API path may be wrong
+Check:
+JavaScript
+fetch("/api/...")
+👉 Make sure backend route exists:
+JavaScript
+app.post("/api/report", ...)
+🎯 FINAL RESULT AFTER FIX
+No JSON error ✅
+Form submits properly ✅
+Existing features unchanged ✅
+🚀 IF STILL NOT WORKING
+Send me: 👉 your fetch code OR backend route
+I’ll fix it line-by-line for you 💯

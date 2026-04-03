@@ -1,0 +1,276 @@
+Got it — you don’t need partial code, you need a perfect Replit-ready master prompt that builds the entire system without errors.
+Below is a clean, complete, production-grade prompt you can directly paste into Replit AI / Ghostwriter / any AI builder.
+🚀 ✅ FINAL MASTER PROMPT (USE THIS IN REPLIT)
+Copy EVERYTHING below 👇 and paste into Replit AI:
+Build a complete full-stack web application named:
+SafeReport AI – Intelligent Anonymous Complaint Reporting & Smart Escalation System
+This must be a fully functional, production-quality application that runs entirely on Replit free tier using only free services.
+🌍 CORE OBJECTIVE:
+Create a secure AI-powered platform where users can anonymously report sensitive issues such as harassment, safety threats, ragging, or mental health concerns.
+The system must:
+Protect identity
+Use AI for classification & sentiment
+Detect urgency
+Assign risk score
+Auto escalate critical cases
+Provide tracking & dashboards
+⚙️ TECH STACK (STRICT):
+Frontend:
+React (no heavy frameworks)
+Tailwind CSS via CDN OR simple CSS
+Backend:
+Node.js
+Express.js
+Database:
+MongoDB Atlas (free tier)
+AI:
+HuggingFace Inference API (free)
+Authentication:
+JWT
+bcrypt
+Storage:
+Base64 image storage (avoid file systems)
+Maps:
+OpenStreetMap OR Leaflet.js (free)
+Voice Input:
+Web Speech API (browser-based)
+📁 PROJECT STRUCTURE:
+Create clean modular structure:
+/frontend /src /components /pages /utils /assets App.js index.js
+/backend server.js /config /models /routes /controllers /middleware /utils
+🔐 AUTHENTICATION & SECURITY:
+Implement:
+JWT authentication
+Password hashing using bcrypt
+Role-based access (user, admin)
+Protected routes middleware
+Input sanitization
+Prevent XSS (basic)
+Prevent injection
+Anonymous reporting protection
+SESSION:
+Token expiry (1h)
+DEMO USERS:
+Admin: email: admin@safereport.com password: Admin@123
+User: email: user@safereport.com password: User@123
+🧩 FEATURES
+👩‍💻 USER SIDE:
+OPENING SCREEN:
+Full screen logo only
+Tagline: “Your Voice. Your Safety.”
+Auto redirect after 2 seconds
+HOME PAGE:
+Clean UI
+Buttons:
+Report Issue
+Track Complaint
+Login
+REPORT FORM (VERY ADVANCED):
+FIELDS:
+Basic:
+Title
+Description (textarea + voice input 🎤)
+Voice Input:
+Use Web Speech API
+Fill description via speech
+Classification:
+Category dropdown
+Dynamic subcategory
+Incident:
+Date & time picker
+Location via map (Leaflet click to select)
+Advanced:
+Urgent? (Yes/No)
+Unsafe? (Yes/No)
+Repeat incident?
+Number of people
+Witness details
+Attachments:
+Upload image → convert to base64
+Privacy:
+Anonymous toggle
+Privacy level:
+Full
+Partial
+Public
+Optional:
+Name
+Email
+Phone
+Extra:
+Preferred contact method
+Additional notes
+ON SUBMIT:
+Generate unique complaint ID
+Save in MongoDB
+Call HuggingFace API:
+sentiment
+classification
+LOGIC:
+urgency = keyword + sentiment
+risk score (0–100)
+TRACK COMPLAINT:
+Enter complaint ID
+Show:
+Status
+Urgency (color-coded)
+Assigned team
+Timeline
+Escalation level
+USER DASHBOARD:
+All complaints
+Status updates
+Messages from admin
+Notifications
+🤖 AI INTEGRATION:
+Use HuggingFace free API:
+sentiment-analysis
+text-classification
+Store:
+ai_category
+sentiment
+urgency
+risk_score
+🧑‍💼 ADMIN SIDE:
+ADMIN LOGIN
+DASHBOARD: Cards:
+Total complaints
+High urgency
+Pending
+Resolved
+COMPLAINT TABLE: Columns:
+ID
+Title
+Category
+Urgency
+Status
+Assigned To
+Filters:
+Category
+Status
+Urgency
+Date
+DETAIL PAGE:
+Full data
+AI results
+Image preview
+Actions:
+Assign case
+Update status
+Add notes
+Escalate
+INTERNAL CHAT:
+Messaging between admin & user
+Stored in DB
+🚨 ESCALATION ENGINE:
+RULE:
+If urgency = HIGH → auto escalate
+LEVELS:
+Level 1: Internal
+Level 2: Senior
+Level 3: Emergency
+On escalation:
+Save record
+Show alert
+Log notification
+📊 ANALYTICS:
+Simple charts:
+Complaints per category
+Status distribution
+Urgency breakdown
+(use basic chart library or simple counts)
+🗄️ DATABASE SCHEMA:
+User:
+name
+email
+password
+role
+Complaint:
+id
+title
+description
+category
+subcategory
+ai_category
+sentiment
+urgency
+risk_score
+location (lat, lng)
+incident_time
+anonymous
+privacy_level
+user_info
+image
+status
+assigned_to
+escalation_level
+admin_notes
+messages[]
+created_at
+updated_at
+🎨 UI/UX:
+Clean modern UI
+Mobile responsive
+Colors:
+Red = High
+Yellow = Medium
+Green = Low
+Admin:
+Sidebar navigation
+User:
+Simple forms
+🛡️ EXTRA FEATURES:
+Add:
+Dark mode toggle
+Real-time UI alerts
+Form validation
+Loading spinners
+Error handling
+Copy Complaint ID button
+Download complaint as PDF (optional simple)
+🖼️ LOGO REQUIREMENT:
+Design a logo:
+Theme: Women safety + protection
+Elements:
+Shield
+Female silhouette
+Soft gradient (purple/pink/blue)
+Save in /frontend/src/assets/logo.png
+📦 README:
+Include:
+Setup steps
+MongoDB connection
+HuggingFace API setup
+Run commands
+⚡ RUNNING ON REPLIT:
+Ensure:
+Single command: npm run dev
+Backend + frontend run together
+Use concurrently if needed
+🚀 FINAL OUTPUT REQUIREMENTS:
+Generate:
+Full backend code
+Full frontend code
+API routes
+Authentication
+UI pages
+Sample data
+No errors
+Ensure:
+Clean code
+Comments
+Modular files
+DO NOT SKIP ANY FEATURE.
+Make it fully working, beginner-friendly, and hackathon-winning quality.
+💡 EXTRA TIP (VERY IMPORTANT)
+After pasting this in Replit:
+Click "Generate App"
+Then say: 👉 “Fix all errors and run the project”
+Then: 👉 “Add sample data and test all APIs”
+🎯 If you want next step
+I can also give you:
+✅ Exact MongoDB setup
+✅ HuggingFace API key setup
+✅ How to demo this in hackathon (VERY IMPORTANT 🔥)
+✅ PPT + explanation to impress judges
+Just tell me 👍
